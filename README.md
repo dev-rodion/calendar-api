@@ -20,6 +20,7 @@ A user who can have multiple calendars.
 
 | Field       | Type                   | Description            |
 | ----------- | ---------------------- | ---------------------- |
+| `id`        | `int`                  | Unique identifier      |
 | `firstName` | `string(50)`           | First name             |
 | `lastName`  | `string(50)`(optional) | Last name              |
 | `email`     | `string(180)`          | Email                  |
@@ -35,6 +36,7 @@ A calendar to which a user can attach events and tasks.
 
 | Field         | Type                     | Description                   |
 | ------------- | ------------------------ | ----------------------------- |
+| `id`          | `int`                    | Unique identifier             |
 | `title`       | `string(50)`             | Calendar title                |
 | `description` | `string(255)` (optional) | Calendar description          |
 | `position`    | `int`                    | Display order in the list     |
@@ -51,6 +53,7 @@ An event with a start and end date. Typically displayed in the calendar as a tim
 
 | Field         | Type                     | Description                              |
 | ------------- | ------------------------ | ---------------------------------------- |
+| `id`          | `int`                    | Unique identifier                        |
 | `title`       | `string(50)`             | Event title                              |
 | `description` | `string(255)` (optional) | Event description                        |
 | `startDate`   | `YYYY-MM-DD`             | Start date                               |
@@ -70,6 +73,7 @@ A task that can be marked as completed. Also has a start and end date and time.
 
 | Field         | Type                     | Description                      |
 | ------------- | ------------------------ | -------------------------------- |
+| `id`          | `int`                    | Unique identifier                |
 | `title`       | `string(50)`             | Task title                       |
 | `description` | `string(255)` (optional) | Task description                 |
 | `dueDate`     | `YYYY-MM-DD`             | Due date                         |
@@ -88,3 +92,23 @@ A task that can be marked as completed. Also has a start and end date and time.
 -   In the future, reminders and recurring events can be implemented.
 
 ---
+
+<br><br><br>
+
+# 🔗 API Endpoints
+
+### 🔐 Authentication
+
+| Method | Endpoint    | Description       |
+| ------ | ----------- | ----------------- |
+| POST   | `/register` | User registration |
+| POST   | `/login`    | User login        |
+
+### 👤 User Profile
+
+| Method | Endpoint            | Description          |
+| ------ | ------------------- | -------------------- |
+| GET    | `/profile`          | Fetch user profile   |
+| PUT    | `/profile`          | Update user profile  |
+| PATCH  | `/profile/password` | Update user password |
+| DELETE | `/profile`          | Delete user profile  |
