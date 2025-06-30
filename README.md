@@ -112,3 +112,15 @@ A task that can be marked as completed. Also has a start and end date and time.
 | PUT    | `/profile`          | Update user profile  |
 | PATCH  | `/profile/password` | Update user password |
 | DELETE | `/profile`          | Delete user profile  |
+
+### 📅 Calendar Management
+
+| Method | Endpoint          | Description              |
+| ------ | ----------------- | ------------------------ |
+| GET    | `/calendars`      | List all user calendars  |
+| POST   | `/calendars`      | Create a new calendar    |
+| GET    | `/calendars/{id}` | Get a specific calendar  |
+| PUT    | `/calendars/{id}` | Update a specific calendar |
+| DELETE | `/calendars/{id}` | Delete a specific calendar |
+
+
