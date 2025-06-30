@@ -24,13 +24,9 @@ class ExceptionListener
         500 => 'Internal server error',
     ];
 
-    /**
-     * Маппинг системных исключений Symfony на наши типы ошибок
-     */
     private array $exceptionTypeMapping = [
         NotFoundHttpException::class => 'ApiEndpointNotFoundException',
         MethodNotAllowedHttpException::class => 'MethodNotAllowedException',
-        // Можно добавить другие маппинги
     ];
 
     public function __construct(
@@ -53,7 +49,6 @@ class ExceptionListener
                 : 500;
         }
 
-        // Логируем все ошибки 500+ как error, остальные как warning
         if ($this->logger) {
             $context = [
                 'exception' => $exception,
@@ -86,7 +81,6 @@ class ExceptionListener
             ],
         ];
 
-        // В debug режиме добавляем дополнительную информацию
         if ($this->isDebug) {
             $errorData['debug'] = [
                 'original_message' => $exception->getMessage(),
@@ -96,7 +90,6 @@ class ExceptionListener
                 'trace' => $this->formatTrace($exception->getTrace()),
             ];
 
-            // Если есть предыдущее исключение, добавляем и его
             if ($exception->getPrevious()) {
                 $errorData['debug']['previous'] = [
                     'message' => $exception->getPrevious()->getMessage(),
@@ -110,18 +103,15 @@ class ExceptionListener
 
     private function getErrorMessage(\Throwable $exception, int $statusCode): string
     {
-        // Для известных статус кодов используем предопределенные сообщения
         if (isset($this->messages[$statusCode])) {
             return $this->messages[$statusCode];
         }
 
-        // Для неизвестных статус кодов используем сообщение из исключения или fallback
         return $exception->getMessage() ?: 'An unexpected error occurred';
     }
 
     private function formatTrace(array $trace): array
     {
-        // Ограничиваем trace для безопасности и читаемости
         $formattedTrace = [];
         $maxTraceDepth = 10;
 
@@ -140,17 +130,14 @@ class ExceptionListener
     {
         $exceptionClass = get_class($exception);
 
-        // Если есть маппинг для этого системного исключения, используем его
         if (isset($this->exceptionTypeMapping[$exceptionClass])) {
             return $this->exceptionTypeMapping[$exceptionClass];
         }
 
-        // Если это наше кастомное исключение (из App\Exception), показываем его тип
         if (str_starts_with($exceptionClass, 'App\\Exception\\')) {
             return basename(str_replace('\\', '/', $exceptionClass));
         }
 
-        // Для всех остальных (системных) исключений возвращаем общий тип
         return 'ApplicationException';
     }
 }

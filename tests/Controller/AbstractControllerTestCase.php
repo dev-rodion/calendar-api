@@ -10,13 +10,37 @@ use PHPUnit\Framework\Attributes\Internal;
 
 abstract class AbstractControllerTestCase extends WebTestCase
 {
+    protected array $validRegisterData = [
+        'firstName' => 'Test',
+        'lastName' => 'User',
+        'email' => 'test@test.com',
+        'password' => 'password123',
+        'confirmPassword' => 'password123',
+    ];
+
+    protected array $validLoginData = [
+        'email' => 'test@test.com',
+        'password' => 'password123',
+    ];
+
+    protected array $validUpdateProfileData = [
+        'firstName' => 'Updated',
+        'lastName' => 'User',
+        'email' => 'updated@test.com',
+    ];
+
+    protected array $validCalendarData = [
+        'title' => 'Test Calendar',
+        'description' => 'This is a test calendar',
+        'position' => 0,
+        'color' => null,
+    ];
 
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
-        // Drop and recreate the database
-        // Drop and recreate the database (без вывода)
+        // Drop and recreate the database (without output)
         exec('php bin/console doctrine:schema:drop --env=test --force > /dev/null 2>&1');
         exec('php bin/console doctrine:schema:create --env=test > /dev/null 2>&1');
     }
@@ -28,6 +52,25 @@ abstract class AbstractControllerTestCase extends WebTestCase
     protected function tearDown(): void
     {
         parent::tearDown();
+    }
+
+    protected function makeAuthenticatedRequest(
+        KernelBrowser $client,
+        string $method,
+        string $uri,
+        string $token,
+        array $data = [],
+        array $extraHeaders = []
+    ): void {
+        $server = [
+            'HTTP_Authorization' => 'Bearer ' . $token,
+            'CONTENT_TYPE' => 'application/json',
+            ...$extraHeaders
+        ];
+
+        $content = !empty($data) ? json_encode($data) : null;
+
+        $client->request($method, $uri, server: $server, content: $content);
     }
 
     protected static function createClient(array $options = [], array $server = []): KernelBrowser
@@ -73,6 +116,16 @@ abstract class AbstractControllerTestCase extends WebTestCase
         return $client;
     }
 
+    protected function getDataFromResponse(KernelBrowser $client): ?array
+    {
+        $response = $client->getResponse();
+        $content = json_decode($response->getContent(), true);
+        if (isset($content['data'])) {
+            return $content['data'];
+        }
+        return null;
+    }
+
     protected function getTokenFromResponse(KernelBrowser $client): ?string
     {
         $response = $client->getResponse();
@@ -87,13 +140,13 @@ abstract class AbstractControllerTestCase extends WebTestCase
             $headers['HTTP_AUTHORIZATION'] = 'Bearer ' . $token;
         }
 
-        $client->request(
+        $this->makeAuthenticatedRequest(
+            $client,
             'PUT',
             '/api/profile',
-            [],
-            [],
-            $headers,
-            json_encode($data)
+            $token,
+            $data,
+            $headers
         );
 
         return $client;
@@ -118,6 +171,68 @@ abstract class AbstractControllerTestCase extends WebTestCase
             [],
             [],
             $headers
+        );
+
+        return $client;
+    }
+
+    protected function makeCalendarListRequest(KernelBrowser $client, ?string $token = null): KernelBrowser
+    {
+        $this->makeAuthenticatedRequest(
+            $client,
+            'GET',
+            '/api/calendars',
+            $token
+        );
+
+        return $client;
+    }
+
+    protected function makeCalendarCreateRequest(KernelBrowser $client, array $data, ?string $token = null): KernelBrowser
+    {
+        $this->makeAuthenticatedRequest(
+            $client,
+            'POST',
+            '/api/calendars',
+            $token,
+            $data,
+        );
+
+        return $client;
+    }
+
+    protected function makeCalendarShowRequest(KernelBrowser $client, int $id, ?string $token = null): KernelBrowser
+    {
+        $this->makeAuthenticatedRequest(
+            $client,
+            'GET',
+            '/api/calendars/' . $id,
+            $token
+        );
+
+        return $client;
+    }
+
+    protected function makeCalendarUpdateRequest(KernelBrowser $client, int $id, array $data, ?string $token = null): KernelBrowser
+    {
+        $this->makeAuthenticatedRequest(
+            $client,
+            'PUT',
+            '/api/calendars/' . $id,
+            $token,
+            $data,
+        );
+
+        return $client;
+    }
+
+    protected function makeCalendarDeleteRequest(KernelBrowser $client, int $id, ?string $token = null): KernelBrowser
+    {
+        $this->makeAuthenticatedRequest(
+            $client,
+            'DELETE',
+            '/api/calendars/' . $id,
+            $token
         );
 
         return $client;

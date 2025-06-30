@@ -22,11 +22,10 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class UserService
 {
     public function __construct(
-        private readonly UserRepository $userRepository,
+        private readonly UserRepository $userRepo,
         private readonly UserPasswordHasherInterface $passwordHasher,
-        private readonly EntityManagerInterface $entityManager,
+        private readonly EntityManagerInterface $em,
         private readonly JWTTokenManagerInterface $jwtTokenManager,
-        private readonly bool $isDebug = false
     ) {
     }
 
@@ -44,8 +43,8 @@ class UserService
         $user->setRoles(['ROLE_USER']);
 
         try {
-            $this->entityManager->persist($user);
-            $this->entityManager->flush();
+            $this->em->persist($user);
+            $this->em->flush();
         } catch (Exception $e) {
             throw new UserRegistrationException();
         }
@@ -55,7 +54,7 @@ class UserService
 
     public function authenticateUser(string $email, string $password): User
     {
-        $user = $this->userRepository->findUserByEmail($email);
+        $user = $this->userRepo->findUserByEmail($email);
 
         if (!$user) {
             throw new UserAuthenticationException('User not found with the provided email.');
@@ -84,8 +83,8 @@ class UserService
         $user->setEmail($userDto->email);
 
         try {
-            $this->entityManager->persist($user);
-            $this->entityManager->flush();
+            $this->em->persist($user);
+            $this->em->flush();
         } catch (Exception $e) {
             throw new UserUpdateException();
         }
@@ -101,13 +100,12 @@ class UserService
             throw new SamePasswordException('New password must be different from current password');
         }
 
-        // Устанавливаем новый пароль
         $hashedPassword = $this->passwordHasher->hashPassword($user, $userDto->password);
         $user->setPassword($hashedPassword);
 
         try {
-            $this->entityManager->persist($user);
-            $this->entityManager->flush();
+            $this->em->persist($user);
+            $this->em->flush();
         } catch (Exception $e) {
             throw new PasswordChangeException();
         }
@@ -116,8 +114,8 @@ class UserService
     public function deleteUser(User $user): void
     {
         try {
-            $this->entityManager->remove($user);
-            $this->entityManager->flush();
+            $this->em->remove($user);
+            $this->em->flush();
         } catch (Exception $e) {
             throw new UserDeletionException();
         }
@@ -125,7 +123,7 @@ class UserService
 
     public function isEmailTaken(string $email): bool
     {
-        return $this->userRepository->findUserByEmail($email) !== null;
+        return $this->userRepo->findUserByEmail($email) !== null;
     }
 
     public function generateToken(User $user): string

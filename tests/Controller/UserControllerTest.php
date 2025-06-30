@@ -9,26 +9,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 final class UserControllerTest extends AbstractControllerTestCase
 {
-    protected array $validRegisterData = [
-        'firstName' => 'Test',
-        'lastName' => 'User',
-        'email' => 'test@test.com',
-        'password' => 'password123',
-        'confirmPassword' => 'password123',
-    ];
-
-    protected array $validLoginData = [
-        'email' => 'test@test.com',
-        'password' => 'password123',
-    ];
-
-    protected array $validUpdateProfileData = [
-        'firstName' => 'Updated',
-        'lastName' => 'User',
-        'email' => 'updated@test.com',
-    ];
-
-
     public static function registrationProvider(): Generator
     {
         yield from UserDataProvider::registrationProvider();

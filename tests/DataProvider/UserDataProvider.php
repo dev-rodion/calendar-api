@@ -179,7 +179,7 @@ class UserDataProvider
             422
         ];
 
-        yield 'empty data' => [[], 422];
+        yield 'empty data' => [[], 400];
     }
 
     public static function authenticationProvider(): Generator
