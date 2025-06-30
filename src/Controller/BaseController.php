@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Exception\UserAuthenticationException;
+use App\Exception\UserUnauthorizedException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
@@ -14,10 +14,10 @@ abstract class BaseController extends AbstractController
         $user = $this->getUser();
 
         if (!$user) {
-            throw new UserAuthenticationException();
+            throw new UserUnauthorizedException();
         }
 
-        return $this->getUser();
+        return $user;
     }
 
     protected function successResponse(array $data = [], string $message = 'OK', int $status = 200): JsonResponse

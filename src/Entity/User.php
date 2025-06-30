@@ -119,7 +119,7 @@ class User extends Timestampable implements UserInterface, PasswordAuthenticated
 
     public function setEmail(string $email): static
     {
-        $this->email = $email;
+        $this->email = trim(strtolower($email));
 
         return $this;
     }

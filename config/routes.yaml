@@ -4,16 +4,3 @@ controllers:
         namespace: App\Controller
     type: attribute
     prefix: /api
-
-
-api_routes:
-    path: /api/{path}
-    # controller: App\Controller\ApiController::handle
-    requirements:
-        path: .*
-
-block_other_routes:
-    path: /{path}
-    controller: Symfony\Component\HttpKernel\Exception\NotFoundHttpException
-    requirements:
-        path: .*

@@ -36,12 +36,22 @@ class UserDto
      */
     #[Assert\NotBlank(groups: ['register', 'update'], message: 'First name cannot be blank.')]
     #[Assert\Length(min: 3, max: 50, groups: ['register', 'update'], minMessage: 'First name must be at least 3 characters long.', maxMessage: 'First name cannot exceed 50 characters.')]
+    #[Assert\Regex(
+        pattern: '/^[a-zA-Z]+$/',
+        groups: ['register', 'update'],
+        message: 'First name can only contain letters.'
+    )]
     public ?string $firstName = null;
 
     /**
      * @var string|null Last name of the user
      */
     #[Assert\Length(min: 3, max: 50, groups: ['register', 'update'], minMessage: 'Last name must be at least 3 characters long.', maxMessage: 'Last name cannot exceed 50 characters.')]
+    #[Assert\Regex(
+        pattern: '/^[a-zA-Z]+$/',
+        groups: ['register', 'update'],
+        message: 'Last name can only contain letters.'
+    )]
     public ?string $lastName = null;
 
     /**
@@ -73,11 +83,11 @@ class UserDto
      * @var string|null Password for the user
      */
     #[Assert\NotBlank(groups: ['register', 'login', 'update_password'], message: 'Password cannot be blank.')]
-    #[Assert\Length(min: 6, max: 100, groups: ['register', 'login', 'update_password'], minMessage: 'Password must be at least 6 characters long.', maxMessage: 'Password cannot exceed 100 characters.')]
+    #[Assert\Length(min: 6, max: 100, groups: ['register', 'update_password'], minMessage: 'Password must be at least 6 characters long.', maxMessage: 'Password cannot exceed 100 characters.')]
     #[Assert\Regex(
         pattern: '/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{6,}$/',
         message: 'Password must contain at least one letter, one number, and be at least 6 characters long.',
-        groups: ['register', 'login', 'update_password']
+        groups: ['register', 'update_password']
     )]
     public ?string $password = null;
 

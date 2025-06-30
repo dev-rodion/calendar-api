@@ -5,8 +5,9 @@ namespace App\Service;
 use App\Dto\UserDto;
 use App\Entity\User;
 use App\Exception\EmailIsTakenException;
-use App\Exception\InvalidCurrentPasswordException;
+use App\Exception\InvalidPasswordException;
 use App\Exception\PasswordChangeException;
+use App\Exception\SamePasswordException;
 use App\Exception\TokenGenerationException;
 use App\Exception\UserAuthenticationException;
 use App\Exception\UserDeletionException;
@@ -15,8 +16,6 @@ use App\Exception\UserUpdateException;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTEncodeFailureException;
-use Lexik\Bundle\JWTAuthenticationBundle\Exception\UserNotFoundException;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -63,7 +62,7 @@ class UserService
         }
 
         if (!$this->passwordHasher->isPasswordValid($user, $password)) {
-            throw new UserAuthenticationException('Invalid password provided.');
+            throw new InvalidPasswordException('Invalid password provided.');
         }
 
         return $user;
@@ -95,7 +94,7 @@ class UserService
     public function updateUserPassword(User $user, UserDto $userDto): void
     {
         if (!$this->passwordHasher->isPasswordValid($user, $userDto->currentPassword)) {
-            throw new InvalidCurrentPasswordException();
+            throw new InvalidPasswordException('Current password is incorrect');
         }
 
         if ($this->passwordHasher->isPasswordValid($user, $userDto->password)) {

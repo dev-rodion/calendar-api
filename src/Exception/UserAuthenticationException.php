@@ -2,9 +2,9 @@
 
 namespace App\Exception;
 
-use RuntimeException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class UserAuthenticationException extends RuntimeException
+class UserAuthenticationException extends NotFoundHttpException
 {
     public function __construct(string $message = 'User authentication failed.')
     {

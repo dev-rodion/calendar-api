@@ -34,7 +34,8 @@ final class UserController extends BaseController
                 'user' => UserResponseDto::fromEntity($user),
                 'token' => $token
             ],
-            'User registered successfully'
+            'User registered successfully',
+            201
         );
     }
 
